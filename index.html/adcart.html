@@ -743,7 +743,7 @@
             </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
-        </div>
+        </div>    
 </div>
 
 <div class="cart-overlay"></div>
@@ -753,24 +753,11 @@
     <ul id="cart-items">
         </ul>
     <p id="cart-total">Total: Sh.0.00</p>
-    <button id="pay-now-btn" class="btn-pay">Pay Now</button>
+<!-- <button id="pay-now-btn" class="btn-pay">Pay Now</button> -->
+ <button class="intaSendPayButton" data-amount="10" data-currency="KES">Pay with mpesa stk</button>
 </div>
 
-<div class="payment-options">
-    <span class="close-cart">&times;</span>
-    <h2>Select Payment Method</h2>
-    <p id="payment-amount">Total: Sh.0.00</p>
 
-    <div class="mpesa-stk-section">
-        <div class="mpesa-input-container">
-            <label for="mpesa-number">Enter M-Pesa Number:</label>
-            <input type="tel" id="mpesa-number" placeholder="e.g., 254712345678">
-        </div>
-        <button class="payment-method-btn mpesa-stk-push">Initiate M-Pesa STK Push</button>
-    </div>
-
-    <button class="payment-method-btn bank">Pay with Bank</button>
-</div>
 
 <footer class="footer" id="footer">
     <div class="footer-column">
@@ -1082,6 +1069,18 @@
     // Initialize the cart display and ratings on load
     updateCartDisplay();
     initializeRatings(); // <-- NEW FUNCTION CALL
+</script>
+<script src="https://unpkg.com/intasend-inlinejs-sdk@4.0.7/build/intasend-inline.js"></script>
+<script>
+
+  new window.IntaSend({
+  publicAPIKey: "ISPubKey_test_54f5a06d-8945-46b8-b65c-3382a385dbe6",
+  live: false //set to true when going live
+  })
+  .on("COMPLETE", (results) => {console.log("Do something on success", results)})
+  .on("FAILED", (results) => {console.log("Do something on failure", results)})
+  .on("IN-PROGRESS", (results) => {console.log("Payment in progress status", results)})
+
 </script>
 
 </body>
