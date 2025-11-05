@@ -1,8 +1,3 @@
-# E-Commerce Website with Welcome Modal
-
-I'll add a welcome modal that asks for the user's name when they enter the page, then displays a personalized welcome message. Here's the complete implementation:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +6,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
     <title>E-Commerce Website</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -25,6 +21,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             justify-content: space-between;
             align-items: center;
         }
+        /* Navigation Bar Styles */
         .navbar {
             display: flex;
             gap: 20px;
@@ -39,6 +36,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
         .navbar a:hover {
             color: #ff5722;
         }
+        /* End Navigation Bar Styles */
         .cart-button {
             background: #ff5722;
             padding: 10px 15px;
@@ -46,6 +44,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             color: white;
             cursor: pointer;
         }
+        /* Header, Logo, and Search Styles */
         .header-left {
             display: flex;
             align-items: center;
@@ -76,6 +75,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
         .search-container button:hover {
             background: #e64a19;
         }
+        /* General content styles */
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -84,39 +84,43 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        
+        /* --- ALIGNMENT FIXES AND ENHANCEMENTS --- */
         .products {
             display: flex;
             flex-wrap: wrap;
+            /* Distribute space evenly between items */
             justify-content: space-between; 
-            gap: 20px 1.5%;
+            gap: 20px 1.5%; /* Space between rows and columns */
         }
         .product {
             border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 8px; /* Slightly rounder corners */
+            padding: 15px; /* More padding */
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Softer shadow */
+            /* Calculate width for 4 products per row (25% minus space for margins/gap) */
             width: calc(25% - 15px); 
-            display: flex;
+            display: flex; /* Flex container for internal alignment */
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 400px;
+            justify-content: space-between; /* Push button to bottom */
+            min-height: 400px; /* Ensures visual consistency */
             transition: transform 0.2s;
         }
         .product:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px); /* Simple hover effect */
         }
         .product img {
             max-width: 100%;
             height: auto;
-            max-height: 150px;
-            object-fit: contain;
+            max-height: 150px; /* Set max height for image consistency */
+            object-fit: contain; /* Ensures the image fits without cropping */
             margin-bottom: 10px;
         }
         .product h3 {
             font-size: 1.1em;
             margin: 5px 0;
-            min-height: 30px;
+            min-height: 30px; /* Reserve space for product title */
         }
         .price {
             color: #ff5722;
@@ -127,7 +131,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             font-size: 0.85em;
             color: #555;
             margin: 5px 0 15px 0;
-            flex-grow: 1;
+            flex-grow: 1; /* Allows description to take up available space */
         }
         .add-to-cart {
             background: #28a745;
@@ -136,10 +140,33 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             padding: 10px 15px;
             cursor: pointer;
             border-radius: 5px;
-            width: 100%;
-            margin-top: auto;
+            width: 100%; /* Button takes full width of card */
+            margin-top: auto; /* Pushes the button to the bottom */
         }
-        .cart-container, .payment-options, .welcome-modal {
+        /* END ALIGNMENT FIXES */
+
+        /* --- START RATING SCALE CSS ADDITION --- */
+        .rating-scale {
+            margin-bottom: 10px;
+            user-select: none;
+        }
+        .rating-scale .fa-star {
+            font-size: 1.2em;
+            color: #ccc; /* Default color (unfilled) */
+            cursor: pointer;
+            transition: color 0.1s;
+        }
+        .rating-scale .fa-star.checked,
+        .rating-scale .fa-star:hover,
+        .rating-scale .fa-star:hover ~ .fa-star {
+            color: orange; /* Color for filled stars and hover effect */
+        }
+        .rating-scale .fa-star:not(.checked):hover ~ .fa-star {
+            color: #ccc; /* Reset stars after the hovered one */
+        }
+        /* --- END RATING SCALE CSS ADDITION --- */
+
+        .cart-container, .payment-options {
             display: none;
             position: fixed;
             top: 50%;
@@ -155,7 +182,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             max-width: 500px;
             text-align: center;
         }
-        .cart-overlay, .welcome-overlay {
+        .cart-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -165,7 +192,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
-        .close-cart, .close-welcome {
+        .close-cart {
             float: right;
             font-size: 1.5em;
             cursor: pointer;
@@ -239,40 +266,7 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             border-radius: 5px;
             font-size: 1em;
         }
-        /* Welcome Modal Styles */
-        .welcome-modal {
-            display: block; /* Show by default on page load */
-        }
-        .welcome-overlay {
-            display: block; /* Show by default on page load */
-        }
-        .welcome-modal h2 {
-            color: #ff5722;
-            margin-bottom: 20px;
-        }
-        .welcome-modal input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-        .welcome-modal button {
-            background: #ff5722;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 1.1em;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-        }
-        .welcome-message {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: #333;
-        }
+        
         /* Footer Styles */
         .footer {
             background-color: #222;
@@ -333,21 +327,13 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             padding-top: 20px;
             border-top: 1px solid #444;
         }
+        /* CSS to hide a section by default */
         .hidden {
             display: none;
         }
     </style>
 </head>
 <body>
-
-<!-- Welcome Modal -->
-<div class="welcome-overlay"></div>
-<div class="welcome-modal">
-    <h2>Welcome to Our Store!</h2>
-    <p>Please enter your name to get started:</p>
-    <input type="text" id="user-name" placeholder="Your name">
-    <button id="submit-name">Enter Store</button>
-</div>
 
 <header>
     <div class="header-left">
@@ -383,6 +369,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Black Leather Belt</h3>
             <p class="price">Ksh300.01</p>
             <p class="product-description">A high-quality, genuine black leather belt with a durable metal buckle, perfect for any occasion. </p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
         
@@ -391,6 +380,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Night Dresses</h3>
             <p class="price">Ksh800.00</p>
             <p class="product-description">Soft and comfortable night dresses, designed for a relaxing night's sleep. Made from breathable fabric.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -399,6 +391,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Oraimo Earpods</h3>
             <p class="price">Ksh1,000.00</p>
             <p class="product-description">Crisp and clear audio with long-lasting battery life, these Oraimo earpods are ideal for music and calls on the go.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -407,6 +402,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Mens' Suit</h3>
             <p class="price">Ksh3,500.02</p>
             <p class="product-description">A premium tailored men's suit, perfect for a professional look and formal events. Available in multiple sizes.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -415,6 +413,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Dryskin Skincare</h3>
             <p class="price">Ksh129.99</p>
             <p class="product-description">"Gentle skincare made to deeply hydrate, soothe, and protect dry skin—leaving it soft, smooth, and healthy-looking."</p>
+            <div class="rating-scale" data-rating="2">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -423,7 +424,10 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Body Lotion </h3>
             <p class="price">Ksh149.99</p>
             <p class="product-description">Smooth, hydrate, and glow — this fast-absorbing body lotion keeps your skin soft and refreshed all day."</p>
-            <button class="add-to-cart">Add to Cart</button>   
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>   
         </div>
 
         <div class="product">
@@ -431,7 +435,10 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Mens'shoes</h3>
             <p class="price">Ksh1,474.50</p>
             <p class="product-description">Elegant, durable, and comfortable shoes for office, business, or special occasions. Classic styles like oxfords, brogues, and loafers to complete your smart look."</p>
-            <button class="add-to-cart">Add to Cart</button>   
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
+            <button class="add-to-cart">Add to Cart</button>   
         </div>
 
         <div class="product">
@@ -439,6 +446,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Classic Chronograph Watch</h3>
             <p class="price">Ksh850.99</p>
             <p class="product-description">A sophisticated stainless steel chronograph watch with a deep blue dial and genuine leather strap. Water-resistant up to 50m.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
         
@@ -447,6 +457,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Polarized Aviator Sunglasses</h3>
             <p class="price">Ksh525.50</p>
             <p class="product-description">Stylish metal-frame aviator sunglasses with polarized lenses offering 100% UV protection. Perfect for driving and outdoor activities.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
         
@@ -455,6 +468,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Waterproof Laptop Backpack</h3>
             <p class="price">Ksh1200.00</p>
             <p class="product-description">A durable, water-resistant nylon backpack with a padded sleeve for a 15-inch laptop and multiple compartments for organization.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -463,6 +479,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>A5 Dotted Grid Notebook</h3>
             <p class="price">Ksh150.75</p>
             <p class="product-description">Premium quality A5 notebook with 180 pages of thick, dotted-grid paper, perfect for journaling, sketching, or note-taking. Features a soft-touch cover.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -471,6 +490,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Hand-Glazed Ceramic Mug</h3>
             <p class="price">Ksh210.00</p>
             <p class="product-description">An artisanal, large-capacity (400ml) ceramic coffee mug with a unique reactive glaze finish. Microwave and dishwasher safe.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -479,6 +501,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Ultra-Light Performance Runners</h3>
             <p class="price">Ksh2500.50</p>
             <p class="product-description">Lightweight running shoes with breathable mesh upper and responsive foam cushioning for superior comfort and energy return during long runs.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
         
@@ -487,6 +512,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Compact Portable Bluetooth Speaker</h3>
             <p class="price">Ksh1899.99</p>
             <p class="product-description">A powerful, compact speaker with 10 hours of playtime and an IPX7 waterproof rating. Delivers rich bass and clear, high-fidelity sound.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
         
@@ -495,6 +523,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>20000mAh Power Bank</h3>
             <p class="price">Ksh1599.00</p>
             <p class="product-description">High-capacity portable charger with dual USB outputs and fast-charging technology. Perfect for keeping your devices powered on the go.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -503,6 +534,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Eco-Friendly Non-Slip Yoga Mat</h3>
             <p class="price">Ksh750.00</p>
             <p class="product-description">Thick, high-density TPE yoga mat providing excellent cushioning and a textured, non-slip surface for stability during practice.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -511,6 +545,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Adjustable Blade Coffee Grinder</h3>
             <p class="price">Ksh1150.25</p>
             <p class="product-description">Electric grinder with stainless steel blades and adjustable settings for precise control over your coffee bean coarseness, from French press to espresso.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
         
@@ -519,6 +556,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Noise-Cancelling Wireless Earbuds</h3>
             <p class="price">Ksh2999.50</p>
             <p class="product-description">True wireless earbuds featuring active noise cancellation, a secure fit, and up to 24 hours of total playtime with the charging case.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
     </div>
@@ -533,6 +573,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Graphic T-Shirt</h3>
             <p class="price">Ksh500.00</p>
             <p class="product-description">A comfortable and stylish cotton t-shirt with a unique graphic print.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -541,6 +584,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Smart Watch</h3>
             <p class="price">Ksh2,500.00</p>
             <p class="product-description">Track your fitness and stay connected with this modern smart watch.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -549,6 +595,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Noise-Cancelling Headphones</h3>
             <p class="price">Ksh1,800.00</p>
             <p class="product-description">Immersive audio with powerful noise cancellation for a superior listening experience.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -557,6 +606,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Travel Backpack</h3>
             <p class="price">Ksh1,200.00</p>
             <p class="product-description">Durable and spacious backpack with multiple compartments for all your travel needs.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -565,6 +617,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Portable Laptop</h3>
             <p class="price">Ksh35,000.00</p>
             <p class="product-description">Powerful yet lightweight laptop for work and entertainment on the go.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -573,6 +628,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Ceramic Coffee Mug</h3>
             <p class="price">Ksh250.00</p>
             <p class="product-description">Classic ceramic mug, perfect for your morning brew or evening tea.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -581,6 +639,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>High-Resolution Mirrorless Camera</h3>
             <p class="price">Ksh45,000.00</p>
             <p class="product-description">Capture professional-grade photos and 4K video with this lightweight mirrorless camera. Includes 18-55mm lens.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
         
@@ -589,6 +650,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Ultrasonic Essential Oil Diffuser</h3>
             <p class="price">Ksh950.00</p>
             <p class="product-description">A quiet ultrasonic diffuser that humidifies and adds aromatherapy to your space. Features 7 color-changing LED lights.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -597,6 +661,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Pre-Seasoned 10-Inch Cast Iron Skillet</h3>
             <p class="price">Ksh1,675.50</p>
             <p class="product-description">Durable cast iron skillet for superior heat retention, perfect for searing, frying, and baking. Ready to use out of the box.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -605,6 +672,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Premium 15lb Weighted Blanket</h3>
             <p class="price">Ksh4,200.00</p>
             <p class="product-description">Soft, breathable weighted blanket engineered to promote relaxation and deep, restful sleep. Hypoallergenic filling.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -613,6 +683,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Dimmable LED Desk Lamp with USB</h3>
             <p class="price">Ksh1,550.99</p>
             <p class="product-description">Modern adjustable LED lamp with 3 color modes, 5 brightness levels, and a convenient built-in USB charging port.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -621,6 +694,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>5TB Portable External Hard Drive</h3>
             <p class="price">Ksh9,800.00</p>
             <p class="product-description">Massive storage capacity in a compact form factor. Fast data transfer speeds via USB 3.0 for quick backups.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -629,6 +705,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Deluxe 9-Piece Garden Tool Set</h3>
             <p class="price">Ksh1,399.00</p>
             <p class="product-description">Includes trowel, transplanter, cultivator, weeder, and gloves in a durable carrying case. Rust-resistant stainless steel heads.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -637,6 +716,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Stainless Steel Insulated Water Bottle</h3>
             <p class="price">Ksh799.00</p>
             <p class="product-description">Keeps drinks cold for 24 hours or hot for 12 hours. Wide mouth for easy cleaning and adding ice. 750ml capacity.</p>
+            <div class="rating-scale" data-rating="4">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -645,6 +727,9 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>Slim Wireless Keyboard & Mouse Combo</h3>
             <p class="price">Ksh1,950.00</p>
             <p class="product-description">Quiet, responsive keyboard and mouse with a single USB receiver for a clutter-free and efficient workspace setup.</p>
+            <div class="rating-scale" data-rating="5">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
 
@@ -653,9 +738,12 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
             <h3>5-Level Fitness Resistance Band Set</h3>
             <p class="price">Ksh650.00</p>
             <p class="product-description">Includes 5 durable latex bands with increasing resistance levels, perfect for home workouts, yoga, and physical therapy.</p>
+            <div class="rating-scale" data-rating="3">
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </div>
             <button class="add-to-cart">Add to Cart</button>
         </div>
-        </div>
+        </div>    
 </div>
 
 <div class="cart-overlay"></div>
@@ -665,24 +753,11 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
     <ul id="cart-items">
         </ul>
     <p id="cart-total">Total: Sh.0.00</p>
-    <button id="pay-now-btn" class="btn-pay">Pay Now</button>
+<!-- <button id="pay-now-btn" class="btn-pay">Pay Now</button> -->
+ <button class="intaSendPayButton" data-amount="10" data-currency="KES">Pay with mpesa stk</button>
 </div>
 
-<div class="payment-options">
-    <span class="close-cart">&times;</span>
-    <h2>Select Payment Method</h2>
-    <p id="payment-amount">Total: Sh.0.00</p>
 
-    <div class="mpesa-stk-section">
-        <div class="mpesa-input-container">
-            <label for="mpesa-number">Enter M-Pesa Number:</label>
-            <input type="tel" id="mpesa-number" placeholder="e.g., 254712345678">
-        </div>
-        <button class="payment-method-btn mpesa-stk-push">Initiate M-Pesa STK Push</button>
-    </div>
-
-    <button class="payment-method-btn bank">Pay with Bank</button>
-</div>
 
 <footer class="footer" id="footer">
     <div class="footer-column">
@@ -725,7 +800,6 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
     let cartItems = [];
     let totalPrice = 0;
     let currentSection = 'home';
-    let userName = '';
 
     // --- Element Selectors ---
     const homeLink = document.getElementById('home-link');
@@ -745,12 +819,6 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
     const mpesaSTKPushBtn = document.querySelector('.mpesa-stk-push');
     const mpesaNumberInput = document.getElementById('mpesa-number');
     const bankPayBtn = document.querySelector('.payment-method-btn.bank');
-    
-    // Welcome modal elements
-    const welcomeModal = document.querySelector('.welcome-modal');
-    const welcomeOverlay = document.querySelector('.welcome-overlay');
-    const userNameInput = document.getElementById('user-name');
-    const submitNameBtn = document.getElementById('submit-name');
 
 
     // --- Utility Functions ---
@@ -804,25 +872,6 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
         updateCartDisplay();
     }
 
-    // Welcome functionality
-    function handleNameSubmission() {
-        const name = userNameInput.value.trim();
-        
-        if (name === '') {
-            alert('Please enter your name to continue.');
-            return;
-        }
-        
-        userName = name;
-        
-        // Hide the welcome modal
-        welcomeModal.style.display = 'none';
-        welcomeOverlay.style.display = 'none';
-        
-        // Show a welcome message
-        alert(`Welcome, ${userName}! Enjoy your shopping experience.`);
-    }
-
     // --- Core Functionality ---
 
     /**
@@ -850,4 +899,189 @@ I'll add a welcome modal that asks for the user's name when they enter the page,
      */
     function filterProducts(query) {
         const container = currentSection === 'home' ? homeProductsContainer : shopProductsContainer;
-        const products = container.querySelectorAll
+        const products = container.querySelectorAll('.product');
+        const lowerCaseQuery = query.toLowerCase();
+
+        products.forEach(product => {
+            const name = product.querySelector('h3').textContent.toLowerCase();
+            const description = product.querySelector('.product-description').textContent.toLowerCase();
+
+            if (name.includes(lowerCaseQuery) || description.includes(lowerCaseQuery)) {
+                product.style.display = 'flex'; // Show the product
+            } else {
+                product.style.display = 'none'; // Hide the product
+            }
+        });
+    }
+
+    /**
+     * Initializes product ratings based on the data-rating attribute.
+     */
+    function initializeRatings() {
+        const ratingContainers = document.querySelectorAll('.rating-scale');
+
+        ratingContainers.forEach(container => {
+            const stars = container.querySelectorAll('.fa-star');
+            const initialRating = parseInt(container.getAttribute('data-rating')) || 0;
+
+            // Set initial checked state
+            stars.forEach((star, index) => {
+                if (index < initialRating) {
+                    star.classList.add('checked');
+                } else {
+                    star.classList.remove('checked');
+                }
+            });
+
+            // Add click listener for interactivity
+            stars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    const newRating = index + 1;
+                    container.setAttribute('data-rating', newRating);
+                    
+                    // Update the checked stars based on the new rating
+                    stars.forEach((s, i) => {
+                        if (i < newRating) {
+                            s.classList.add('checked');
+                        } else {
+                            s.classList.remove('checked');
+                        }
+                    });
+                    alert(`Product rated ${newRating} stars! (This rating is only locally saved.)`);
+                });
+            });
+        });
+    }
+
+
+    // --- Event Listeners ---
+
+    // 1. Navigation Links (Home/Shop Button Fix)
+    homeLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchSection('home');
+    });
+
+    shopLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchSection('shop');
+    });
+
+    // 2. Search Functionality
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        filterProducts(query);
+    });
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        filterProducts(query);
+    });
+
+
+    // 3. Add to Cart Buttons
+    // Listen to clicks on both product containers
+    function setupAddToCartListeners(container) {
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('add-to-cart')) {
+                const product = e.target.closest('.product');
+                const name = product.querySelector('h3').textContent;
+                const priceText = product.querySelector('.price').textContent;
+                const price = parsePrice(priceText);
+                
+                addItemToCart(name, price);
+            }
+        });
+    }
+    setupAddToCartListeners(homeProductsContainer);
+    setupAddToCartListeners(shopProductsContainer);
+
+
+    // 4. Cart Modal Controls
+    cartButton.addEventListener('click', () => {
+        cartContainer.style.display = 'block';
+        cartOverlay.style.display = 'block';
+    });
+
+    // Close Cart/Payment Modals
+    closeCartButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            cartContainer.style.display = 'none';
+            paymentOptions.style.display = 'none';
+            cartOverlay.style.display = 'none';
+        });
+    });
+
+    // Remove item from cart
+    document.getElementById('cart-items').addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-btn')) {
+            const index = parseInt(e.target.getAttribute('data-index'));
+            removeItemFromCart(index);
+        }
+    });
+
+    // 5. Payment Flow
+    payNowBtn.addEventListener('click', () => {
+        if (totalPrice === 0) {
+            alert("Your cart is empty. Please add items to proceed.");
+            return;
+        }
+        cartContainer.style.display = 'none';
+        paymentOptions.style.display = 'block';
+    });
+
+    mpesaSTKPushBtn.addEventListener('click', () => {
+        const phoneNumber = mpesaNumberInput.value.trim();
+        if (phoneNumber.length < 10) {
+            alert('Please enter a valid phone number (e.g., 2547...).');
+            return;
+        }
+
+        // --- Simulated M-Pesa STK Push ---
+        alert(`Initiating M-Pesa STK Push for Sh.${totalPrice.toFixed(2)} to ${phoneNumber}. Check your phone!`);
+        
+        // Simulate a successful payment and reset
+        setTimeout(() => {
+            alert('Payment simulation successful!');
+            cartItems = [];
+            updateCartDisplay();
+            paymentOptions.style.display = 'none';
+            cartOverlay.style.display = 'none';
+        }, 3000);
+    });
+
+    bankPayBtn.addEventListener('click', () => {
+        // --- Simulated Bank Payment ---
+        alert(`Redirecting for Bank Payment of Sh.${totalPrice.toFixed(2)}. (Simulation)`);
+
+        // Simulate a successful payment and reset
+        setTimeout(() => {
+            alert('Bank payment simulation successful!');
+            cartItems = [];
+            updateCartDisplay();
+            paymentOptions.style.display = 'none';
+            cartOverlay.style.display = 'none';
+        }, 3000);
+    });
+
+
+    // Initialize the cart display and ratings on load
+    updateCartDisplay();
+    initializeRatings(); // <-- NEW FUNCTION CALL
+</script>
+<script src="https://unpkg.com/intasend-inlinejs-sdk@4.0.7/build/intasend-inline.js"></script>
+<script>
+
+  new window.IntaSend({
+  publicAPIKey: "ISPubKey_test_54f5a06d-8945-46b8-b65c-3382a385dbe6",
+  live: false //set to true when going live
+  })
+  .on("COMPLETE", (results) => {console.log("Do something on success", results)})
+  .on("FAILED", (results) => {console.log("Do something on failure", results)})
+  .on("IN-PROGRESS", (results) => {console.log("Payment in progress status", results)})
+
+</script>
+
+</body>
+</html>
