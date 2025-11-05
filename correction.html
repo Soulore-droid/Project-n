@@ -1,0 +1,853 @@
+# E-Commerce Website with Welcome Modal
+
+I'll add a welcome modal that asks for the user's name when they enter the page, then displays a personalized welcome message. Here's the complete implementation:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #ff5722;
+        }
+        .cart-button {
+            background: #ff5722;
+            padding: 10px 15px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+        .search-container input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+        .search-container button {
+            padding: 8px 12px;
+            background: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        .search-container button:hover {
+            background: #e64a19;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between; 
+            gap: 20px 1.5%;
+        }
+        .product {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            width: calc(25% - 15px); 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 400px;
+            transition: transform 0.2s;
+        }
+        .product:hover {
+            transform: translateY(-5px);
+        }
+        .product img {
+            max-width: 100%;
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .product h3 {
+            font-size: 1.1em;
+            margin: 5px 0;
+            min-height: 30px;
+        }
+        .price {
+            color: #ff5722;
+            font-size: 1.4em;
+            margin: 10px 0;
+        }
+        .product-description {
+            font-size: 0.85em;
+            color: #555;
+            margin: 5px 0 15px 0;
+            flex-grow: 1;
+        }
+        .add-to-cart {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: auto;
+        }
+        .cart-container, .payment-options, .welcome-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .cart-overlay, .welcome-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .close-cart, .close-welcome {
+            float: right;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        #cart-items {
+            list-style: none;
+            padding: 0;
+        }
+        #cart-items li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #cart-total {
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: right;
+        }
+        .btn-pay {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+            width: 100%;
+        }
+        .payment-method-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+        }
+        .payment-method-btn.bank {
+            background: #007BFF;
+        }
+        .payment-options p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        .mpesa-input-container {
+            margin-bottom: 15px;
+        }
+        .mpesa-input-container label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .mpesa-input-container input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        /* Welcome Modal Styles */
+        .welcome-modal {
+            display: block; /* Show by default on page load */
+        }
+        .welcome-overlay {
+            display: block; /* Show by default on page load */
+        }
+        .welcome-modal h2 {
+            color: #ff5722;
+            margin-bottom: 20px;
+        }
+        .welcome-modal input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .welcome-modal button {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        .welcome-message {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        /* Footer Styles */
+        .footer {
+            background-color: #222;
+            color: #ddd;
+            padding: 40px 20px;
+            font-size: 0.9em;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            max-width: 250px;
+        }
+        .footer-column h4 {
+            color: #fff;
+            border-bottom: 2px solid #ff5722;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .footer-column a, .footer-column p {
+            color: #ddd;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+        .footer-column a:hover {
+            color: #ff5722;
+        }
+        .social-icons i { 
+            font-size: 24px; 
+            color: white;
+            margin-right: 15px;
+        }
+        .newsletter-form input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-top: 10px;
+        }
+        .newsletter-form button {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Welcome Modal -->
+<div class="welcome-overlay"></div>
+<div class="welcome-modal">
+    <h2>Welcome to Our Store!</h2>
+    <p>Please enter your name to get started:</p>
+    <input type="text" id="user-name" placeholder="Your name">
+    <button id="submit-name">Enter Store</button>
+</div>
+
+<header>
+    <div class="header-left">
+        <img src="Images/logoo.png" alt="E-Commerce Logo" class="logo"> 
+        <h1>E-Commerce Website</h1>
+    </div>
+
+    <div class="search-container">
+        <form id="search-form" action="#">
+            <input type="text" placeholder="Search..." name="search" id="search-input">
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+    </div>
+
+    <div class="navbar">
+        <a href="#home-section" id="home-link">Home</a>
+        <a href="#shop-section" id="shop-link">Shop</a>
+        <a href="#footer">Info</a>
+    </div>
+
+    <div>
+        <span id="cart-count">0</span> items in cart
+        <button class="cart-button">Cart</button>
+    </div>
+</header>
+
+<div id="home-section" class="container">
+    <h2>Shop the Spotlight (Top Picks)</h2>
+    <div class="products" id="home-products">
+        
+        <div class="product">
+            <img src="Images/belt.jfif" alt="Black Leather Belt">
+            <h3>Black Leather Belt</h3>
+            <p class="price">Ksh300.01</p>
+            <p class="product-description">A high-quality, genuine black leather belt with a durable metal buckle, perfect for any occasion. </p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <img src="Images/Dress.jfif" alt="Night Dresses">
+            <h3>Night Dresses</h3>
+            <p class="price">Ksh800.00</p>
+            <p class="product-description">Soft and comfortable night dresses, designed for a relaxing night's sleep. Made from breathable fabric.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/oraimo earpods.jfif" alt="Oraimo Earpods">
+            <h3>Oraimo Earpods</h3>
+            <p class="price">Ksh1,000.00</p>
+            <p class="product-description">Crisp and clear audio with long-lasting battery life, these Oraimo earpods are ideal for music and calls on the go.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/mens' suit.jfif" alt="Mens Suit">
+            <h3>Mens' Suit</h3>
+            <p class="price">Ksh3,500.02</p>
+            <p class="product-description">A premium tailored men's suit, perfect for a professional look and formal events. Available in multiple sizes.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Dryskin skincare" alt="Dryskin skincare">
+            <h3>Dryskin Skincare</h3>
+            <p class="price">Ksh129.99</p>
+            <p class="product-description">"Gentle skincare made to deeply hydrate, soothe, and protect dry skin—leaving it soft, smooth, and healthy-looking."</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Body lotion 1" alt="Body Lotion">
+            <h3>Body Lotion </h3>
+            <p class="price">Ksh149.99</p>
+            <p class="product-description">Smooth, hydrate, and glow — this fast-absorbing body lotion keeps your skin soft and refreshed all day."</p>
+            <button class="add-to-cart">Add to Cart</button>   
+        </div>
+
+        <div class="product">
+            <img src="Images/Mens' shoes" alt="Mens'shoes">
+            <h3>Mens'shoes</h3>
+            <p class="price">Ksh1,474.50</p>
+            <p class="product-description">Elegant, durable, and comfortable shoes for office, business, or special occasions. Classic styles like oxfords, brogues, and loafers to complete your smart look."</p>
+            <button class="add-to-cart">Add to Cart</button>   
+        </div>
+
+        <div class="product">
+            <img src="Images/Chronological watch" alt="Classic Chronograph Watch">
+            <h3>Classic Chronograph Watch</h3>
+            <p class="price">Ksh850.99</p>
+            <p class="product-description">A sophisticated stainless steel chronograph watch with a deep blue dial and genuine leather strap. Water-resistant up to 50m.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <img src="Images/Aviator Sunglasses" alt="Aviator Sunglasses">
+            <h3>Polarized Aviator Sunglasses</h3>
+            <p class="price">Ksh525.50</p>
+            <p class="product-description">Stylish metal-frame aviator sunglasses with polarized lenses offering 100% UV protection. Perfect for driving and outdoor activities.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <img src="Images/Laptop Backpack lapi" alt="Laptop Backpack">
+            <h3>Waterproof Laptop Backpack</h3>
+            <p class="price">Ksh1200.00</p>
+            <p class="product-description">A durable, water-resistant nylon backpack with a padded sleeve for a 15-inch laptop and multiple compartments for organization.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/A5 Dotted Grid Notebook" alt="A5 Lined Notebook">
+            <h3>A5 Dotted Grid Notebook</h3>
+            <p class="price">Ksh150.75</p>
+            <p class="product-description">Premium quality A5 notebook with 180 pages of thick, dotted-grid paper, perfect for journaling, sketching, or note-taking. Features a soft-touch cover.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Hand-Glazed Ceramic Mug" alt="Ceramic Coffee Mug">
+            <h3>Hand-Glazed Ceramic Mug</h3>
+            <p class="price">Ksh210.00</p>
+            <p class="product-description">An artisanal, large-capacity (400ml) ceramic coffee mug with a unique reactive glaze finish. Microwave and dishwasher safe.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Ultra-Light Performance Runners" alt="Lightweight Running Shoes">
+            <h3>Ultra-Light Performance Runners</h3>
+            <p class="price">Ksh2500.50</p>
+            <p class="product-description">Lightweight running shoes with breathable mesh upper and responsive foam cushioning for superior comfort and energy return during long runs.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <img src="Images/Compact Portable Bluetooth Speaker" alt="Portable Bluetooth Speaker">
+            <h3>Compact Portable Bluetooth Speaker</h3>
+            <p class="price">Ksh1899.99</p>
+            <p class="product-description">A powerful, compact speaker with 10 hours of playtime and an IPX7 waterproof rating. Delivers rich bass and clear, high-fidelity sound.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <img src="Images/power bank" alt="Portable Power Bank">
+            <h3>20000mAh Power Bank</h3>
+            <p class="price">Ksh1599.00</p>
+            <p class="product-description">High-capacity portable charger with dual USB outputs and fast-charging technology. Perfect for keeping your devices powered on the go.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/yoga matt" alt="Non-Slip Yoga Mat">
+            <h3>Eco-Friendly Non-Slip Yoga Mat</h3>
+            <p class="price">Ksh750.00</p>
+            <p class="product-description">Thick, high-density TPE yoga mat providing excellent cushioning and a textured, non-slip surface for stability during practice.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/coffee grinder" alt="Electric Coffee Grinder">
+            <h3>Adjustable Blade Coffee Grinder</h3>
+            <p class="price">Ksh1150.25</p>
+            <p class="product-description">Electric grinder with stainless steel blades and adjustable settings for precise control over your coffee bean coarseness, from French press to espresso.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <img src="Images/wireless earbuds" alt="Wireless Earbuds">
+            <h3>Noise-Cancelling Wireless Earbuds</h3>
+            <p class="price">Ksh2999.50</p>
+            <p class="product-description">True wireless earbuds featuring active noise cancellation, a secure fit, and up to 24 hours of total playtime with the charging case.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+<div id="shop-section" class="container hidden">
+    <h2>More Products (Shop Items)</h2>
+    <div class="products" id="shop-products">
+        
+        <div class="product">
+            <img src="Images/Branded T-shirt" alt="T-Shirt">
+            <h3>Graphic T-Shirt</h3>
+            <p class="price">Ksh500.00</p>
+            <p class="product-description">A comfortable and stylish cotton t-shirt with a unique graphic print.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Smart watch" alt="Smart Watch">
+            <h3>Smart Watch</h3>
+            <p class="price">Ksh2,500.00</p>
+            <p class="product-description">Track your fitness and stay connected with this modern smart watch.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Noise cancelling headphones" alt="Headphones">
+            <h3>Noise-Cancelling Headphones</h3>
+            <p class="price">Ksh1,800.00</p>
+            <p class="product-description">Immersive audio with powerful noise cancellation for a superior listening experience.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Travel backpack" alt="Backpack">
+            <h3>Travel Backpack</h3>
+            <p class="price">Ksh1,200.00</p>
+            <p class="product-description">Durable and spacious backpack with multiple compartments for all your travel needs.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/laptop" alt="Laptop">
+            <h3>Portable Laptop</h3>
+            <p class="price">Ksh35,000.00</p>
+            <p class="product-description">Powerful yet lightweight laptop for work and entertainment on the go.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Hand-Glazed Ceramic Mug" alt="Coffee Mug">
+            <h3>Ceramic Coffee Mug</h3>
+            <p class="price">Ksh250.00</p>
+            <p class="product-description">Classic ceramic mug, perfect for your morning brew or evening tea.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/High-Resolution Mirrorless Camera" alt="Digital Camera">
+            <h3>High-Resolution Mirrorless Camera</h3>
+            <p class="price">Ksh45,000.00</p>
+            <p class="product-description">Capture professional-grade photos and 4K video with this lightweight mirrorless camera. Includes 18-55mm lens.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        
+        <div class="product">
+            <img src="Images/Ultrasonic Essential Oil Diffuser" alt="Essential Oil Diffuser">
+            <h3>Ultrasonic Essential Oil Diffuser</h3>
+            <p class="price">Ksh950.00</p>
+            <p class="product-description">A quiet ultrasonic diffuser that humidifies and adds aromatherapy to your space. Features 7 color-changing LED lights.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Pre-Seasoned 10-Inch Cast Iron Skillet" alt="Cast Iron Skillet">
+            <h3>Pre-Seasoned 10-Inch Cast Iron Skillet</h3>
+            <p class="price">Ksh1,675.50</p>
+            <p class="product-description">Durable cast iron skillet for superior heat retention, perfect for searing, frying, and baking. Ready to use out of the box.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Premium 15lb Weighted Blanket" alt="Weighted Blanket">
+            <h3>Premium 15lb Weighted Blanket</h3>
+            <p class="price">Ksh4,200.00</p>
+            <p class="product-description">Soft, breathable weighted blanket engineered to promote relaxation and deep, restful sleep. Hypoallergenic filling.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Dimmable LED Desk Lamp with USB" alt="LED Desk Lamp">
+            <h3>Dimmable LED Desk Lamp with USB</h3>
+            <p class="price">Ksh1,550.99</p>
+            <p class="product-description">Modern adjustable LED lamp with 3 color modes, 5 brightness levels, and a convenient built-in USB charging port.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/5TB Portable External Hard Drive" alt="External Hard Drive">
+            <h3>5TB Portable External Hard Drive</h3>
+            <p class="price">Ksh9,800.00</p>
+            <p class="product-description">Massive storage capacity in a compact form factor. Fast data transfer speeds via USB 3.0 for quick backups.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Deluxe 9-Piece Garden Tool Set" alt="Garden Tool Set">
+            <h3>Deluxe 9-Piece Garden Tool Set</h3>
+            <p class="price">Ksh1,399.00</p>
+            <p class="product-description">Includes trowel, transplanter, cultivator, weeder, and gloves in a durable carrying case. Rust-resistant stainless steel heads.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Stainless Steel Insulated Water Bottle" alt="Insulated Water Bottle">
+            <h3>Stainless Steel Insulated Water Bottle</h3>
+            <p class="price">Ksh799.00</p>
+            <p class="product-description">Keeps drinks cold for 24 hours or hot for 12 hours. Wide mouth for easy cleaning and adding ice. 750ml capacity.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/Slim Wireless Keyboard & Mouse Combo" alt="Wireless Keyboard and Mouse">
+            <h3>Slim Wireless Keyboard & Mouse Combo</h3>
+            <p class="price">Ksh1,950.00</p>
+            <p class="product-description">Quiet, responsive keyboard and mouse with a single USB receiver for a clutter-free and efficient workspace setup.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
+        <div class="product">
+            <img src="Images/5-Level Fitness Resistance Band Set" alt="Resistance Bands Set">
+            <h3>5-Level Fitness Resistance Band Set</h3>
+            <p class="price">Ksh650.00</p>
+            <p class="product-description">Includes 5 durable latex bands with increasing resistance levels, perfect for home workouts, yoga, and physical therapy.</p>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        </div>
+</div>
+
+<div class="cart-overlay"></div>
+    <div class="cart-container">
+    <span class="close-cart">&times;</span>
+    <h2>Your Cart</h2>
+    <ul id="cart-items">
+        </ul>
+    <p id="cart-total">Total: Sh.0.00</p>
+    <button id="pay-now-btn" class="btn-pay">Pay Now</button>
+</div>
+
+<div class="payment-options">
+    <span class="close-cart">&times;</span>
+    <h2>Select Payment Method</h2>
+    <p id="payment-amount">Total: Sh.0.00</p>
+
+    <div class="mpesa-stk-section">
+        <div class="mpesa-input-container">
+            <label for="mpesa-number">Enter M-Pesa Number:</label>
+            <input type="tel" id="mpesa-number" placeholder="e.g., 254712345678">
+        </div>
+        <button class="payment-method-btn mpesa-stk-push">Initiate M-Pesa STK Push</button>
+    </div>
+
+    <button class="payment-method-btn bank">Pay with Bank</button>
+</div>
+
+<footer class="footer" id="footer">
+    <div class="footer-column">
+        <h4>Customer Support</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Shipping & Delivery</a>
+        <a href="#">Returns & Exchanges</a>
+        <a href="#">Contact Us</a>
+    </div>
+    <div class="footer-column">
+        <h4>About Solwave</h4>
+        <a href="#">Our Story</a>
+        <a href="#">Careers</a>
+        <a href="#">Blog</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+    </div>
+    <div class="footer-column">
+        <h4>Connect With Us</h4>
+        <div class="social-icons">
+            <i class="fa fa-facebook-square" style="font-size:24px; color:white;"></i>
+            <i class="fa fa-instagram" style="font-size:24px; color:white;"></i>
+            <i class="fa fa-twitter-square" style="font-size:24px; color:white;"></i>
+        </div>
+    </div>
+    <div class="footer-column">
+        <h4>Join the Solwave Community</h4>
+        <p>Get updates on new arrivals, exclusive offers & more.</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit">Subscribe</button>
+        </form>
+    </div>
+    <div class="copyright">
+        © 2025 Solwave Stores. All rights reserved.
+    </div>
+</footer>
+
+<script>
+    let cartItems = [];
+    let totalPrice = 0;
+    let currentSection = 'home';
+    let userName = '';
+
+    // --- Element Selectors ---
+    const homeLink = document.getElementById('home-link');
+    const shopLink = document.getElementById('shop-link');
+    const homeSection = document.getElementById('home-section');
+    const shopSection = document.getElementById('shop-section');
+    const homeProductsContainer = document.getElementById('home-products');
+    const shopProductsContainer = document.getElementById('shop-products');
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const cartButton = document.querySelector('.cart-button');
+    const cartContainer = document.querySelector('.cart-container');
+    const cartOverlay = document.querySelector('.cart-overlay');
+    const closeCartButtons = document.querySelectorAll('.close-cart');
+    const payNowBtn = document.getElementById('pay-now-btn');
+    const paymentOptions = document.querySelector('.payment-options');
+    const mpesaSTKPushBtn = document.querySelector('.mpesa-stk-push');
+    const mpesaNumberInput = document.getElementById('mpesa-number');
+    const bankPayBtn = document.querySelector('.payment-method-btn.bank');
+    
+    // Welcome modal elements
+    const welcomeModal = document.querySelector('.welcome-modal');
+    const welcomeOverlay = document.querySelector('.welcome-overlay');
+    const userNameInput = document.getElementById('user-name');
+    const submitNameBtn = document.getElementById('submit-name');
+
+
+    // --- Utility Functions ---
+
+    /**
+     * Cleans a price string (e.g., "Ksh1,500.50") and returns a float number.
+     */
+    function parsePrice(priceText) {
+        // Remove all non-digit characters except the decimal point, then parse as a float.
+        return parseFloat(priceText.replace(/[^0-9.]/g, ''));
+    }
+
+    function updateCartDisplay() {
+        const cartItemsList = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const cartCountElement = document.getElementById('cart-count');
+
+        cartItemsList.innerHTML = '';
+        totalPrice = 0;
+        let totalItems = 0;
+
+        cartItems.forEach((item, index) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <span>${item.name} (${item.quantity}) - Sh.${(item.price * item.quantity).toFixed(2)}</span>
+                <button class="remove-btn" data-index="${index}">Remove</button>
+            `;
+            cartItemsList.appendChild(listItem);
+            totalPrice += item.price * item.quantity;
+            totalItems += item.quantity;
+        });
+
+        cartTotalElement.textContent = `Total: Sh.${totalPrice.toFixed(2)}`;
+        cartCountElement.textContent = totalItems;
+        document.getElementById('payment-amount').textContent = `Total: Sh.${totalPrice.toFixed(2)}`;
+    }
+
+    function addItemToCart(name, price) {
+        const existingItem = cartItems.find(item => item.name === name);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cartItems.push({ name, price, quantity: 1 });
+        }
+        updateCartDisplay();
+    }
+
+    function removeItemFromCart(index) {
+        cartItems.splice(index, 1);
+        updateCartDisplay();
+    }
+
+    // Welcome functionality
+    function handleNameSubmission() {
+        const name = userNameInput.value.trim();
+        
+        if (name === '') {
+            alert('Please enter your name to continue.');
+            return;
+        }
+        
+        userName = name;
+        
+        // Hide the welcome modal
+        welcomeModal.style.display = 'none';
+        welcomeOverlay.style.display = 'none';
+        
+        // Show a welcome message
+        alert(`Welcome, ${userName}! Enjoy your shopping experience.`);
+    }
+
+    // --- Core Functionality ---
+
+    /**
+     * Switches the view between Home and Shop sections.
+     * @param {string} section - 'home' or 'shop'
+     */
+    function switchSection(section) {
+        if (section === 'shop') {
+            homeSection.classList.add('hidden');
+            shopSection.classList.remove('hidden');
+            currentSection = 'shop';
+        } else { // 'home'
+            shopSection.classList.add('hidden');
+            homeSection.classList.remove('hidden');
+            currentSection = 'home';
+        }
+        // Clear search input and show all products when switching sections
+        searchInput.value = '';
+        filterProducts('');
+    }
+
+    /**
+     * Filters the products in the currently visible section based on a query.
+     * @param {string} query - The search term.
+     */
+    function filterProducts(query) {
+        const container = currentSection === 'home' ? homeProductsContainer : shopProductsContainer;
+        const products = container.querySelectorAll
