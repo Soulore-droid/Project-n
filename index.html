@@ -29,12 +29,6 @@
         </form>
       </div>
 
-      <div class="navbar">
-        <a href="#home-section" id="home-link">Home</a>
-        <a href="#shop-section" id="shop-link">Shop</a>
-        <a href="#footer">Info</a>
-      </div>
-
       <div>
         <span id="cart-count">0</span> items in cart
         <button class="cart-button">
@@ -55,7 +49,7 @@
     </header>
 
     <div id="home-section" class="container">
-      <h2>Shop the Spotlight (Top Picks)</h2>
+      <h2>All Products</h2>
       <div class="products" id="home-products">
         <div class="product">
           <img src="Images/belt.jfif" alt="Black Leather Belt" />
@@ -363,7 +357,7 @@
       </div>
     </div>
 
-    <div id="shop-section" class="container hidden">
+    <div id="shop-section" class="container">
       <h2>More Products (Shop Items)</h2>
       <div class="products" id="shop-products">
         <div class="product">
@@ -658,8 +652,7 @@
       <h2>Your Cart</h2>
       <ul id="cart-items"></ul>
       <p id="cart-total">Total: Sh.0.00</p>
-      <!-- <button id="pay-now-btn" class="btn-pay">Pay Now</button> -->
-      <button class="intaSendPayButton" data-amount="10" data-currency="KES">
+      <button class="intaSendPayButton" data-amount="0" data-currency="KES">
         Pay with mpesa stk
       </button>
     </div>
@@ -708,11 +701,8 @@
     <script>
       let cartItems = [];
       let totalPrice = 0;
-      let currentSection = "home";
 
       // --- Element Selectors ---
-      const homeLink = document.getElementById("home-link");
-      const shopLink = document.getElementById("shop-link");
       const homeSection = document.getElementById("home-section");
       const shopSection = document.getElementById("shop-section");
       const homeProductsContainer = document.getElementById("home-products");
@@ -723,11 +713,7 @@
       const cartContainer = document.querySelector(".cart-container");
       const cartOverlay = document.querySelector(".cart-overlay");
       const closeCartButtons = document.querySelectorAll(".close-cart");
-      const payNowBtn = document.getElementById("pay-now-btn");
-      const paymentOptions = document.querySelector(".payment-options");
-      const mpesaSTKPushBtn = document.querySelector(".mpesa-stk-push");
-      const mpesaNumberInput = document.getElementById("mpesa-number");
-      const bankPayBtn = document.querySelector(".payment-method-btn.bank");
+      const intaSendBtn = document.querySelector(".intaSendPayButton");
 
       // --- Utility Functions ---
 
@@ -763,9 +749,10 @@
 
         cartTotalElement.textContent = `Total: Sh.${totalPrice.toFixed(2)}`;
         cartCountElement.textContent = totalItems;
-        document.getElementById(
-          "payment-amount"
-        ).textContent = `Total: Sh.${totalPrice.toFixed(2)}`;
+        // Keep IntaSend amount synced with the cart total
+        if (intaSendBtn) {
+          intaSendBtn.setAttribute("data-amount", totalPrice.toFixed(2));
+        }
       }
 
       function addItemToCart(name, price) {
@@ -787,35 +774,11 @@
       // --- Core Functionality ---
 
       /**
-       * Switches the view between Home and Shop sections.
-       * @param {string} section - 'home' or 'shop'
-       */
-      function switchSection(section) {
-        if (section === "shop") {
-          homeSection.classList.add("hidden");
-          shopSection.classList.remove("hidden");
-          currentSection = "shop";
-        } else {
-          // 'home'
-          shopSection.classList.add("hidden");
-          homeSection.classList.remove("hidden");
-          currentSection = "home";
-        }
-        // Clear search input and show all products when switching sections
-        searchInput.value = "";
-        filterProducts("");
-      }
-
-      /**
        * Filters the products in the currently visible section based on a query.
        * @param {string} query - The search term.
        */
       function filterProducts(query) {
-        const container =
-          currentSection === "home"
-            ? homeProductsContainer
-            : shopProductsContainer;
-        const products = container.querySelectorAll(".product");
+        const products = document.querySelectorAll(".products .product");
         const lowerCaseQuery = query.toLowerCase();
 
         products.forEach((product) => {
@@ -879,18 +842,7 @@
 
       // --- Event Listeners ---
 
-      // 1. Navigation Links (Home/Shop Button Fix)
-      homeLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        switchSection("home");
-      });
-
-      shopLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        switchSection("shop");
-      });
-
-      // 2. Search Functionality
+      // 1. Search Functionality
       searchForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const query = searchInput.value.trim();
@@ -902,7 +854,7 @@
         filterProducts(query);
       });
 
-      // 3. Add to Cart Buttons
+      // 2. Add to Cart Buttons
       // Listen to clicks on both product containers
       function setupAddToCartListeners(container) {
         container.addEventListener("click", (e) => {
@@ -919,7 +871,7 @@
       setupAddToCartListeners(homeProductsContainer);
       setupAddToCartListeners(shopProductsContainer);
 
-      // 4. Cart Modal Controls
+      // 3. Cart Modal Controls
       cartButton.addEventListener("click", () => {
         cartContainer.style.display = "block";
         cartOverlay.style.display = "block";
@@ -929,7 +881,6 @@
       closeCartButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
           cartContainer.style.display = "none";
-          paymentOptions.style.display = "none";
           cartOverlay.style.display = "none";
         });
       });
@@ -942,65 +893,13 @@
         }
       });
 
-      // 5. Payment Flow
-      payNowBtn.addEventListener("click", () => {
-        if (totalPrice === 0) {
-          alert("Your cart is empty. Please add items to proceed.");
-          return;
-        }
-        cartContainer.style.display = "none";
-        paymentOptions.style.display = "block";
-      });
-
-      mpesaSTKPushBtn.addEventListener("click", () => {
-        const phoneNumber = mpesaNumberInput.value.trim();
-        if (phoneNumber.length < 10) {
-          alert("Please enter a valid phone number (e.g., 2547...).");
-          return;
-        }
-
-        // --- Simulated M-Pesa STK Push ---
-        alert(
-          `Initiating M-Pesa STK Push for Sh.${totalPrice.toFixed(
-            2
-          )} to ${phoneNumber}. Check your phone!`
-        );
-
-        // Simulate a successful payment and reset
-        setTimeout(() => {
-          alert("Payment simulation successful!");
-          cartItems = [];
-          updateCartDisplay();
-          paymentOptions.style.display = "none";
-          cartOverlay.style.display = "none";
-        }, 3000);
-      });
-
-      bankPayBtn.addEventListener("click", () => {
-        // --- Simulated Bank Payment ---
-        alert(
-          `Redirecting for Bank Payment of Sh.${totalPrice.toFixed(
-            2
-          )}. (Simulation)`
-        );
-
-        // Simulate a successful payment and reset
-        setTimeout(() => {
-          alert("Bank payment simulation successful!");
-          cartItems = [];
-          updateCartDisplay();
-          paymentOptions.style.display = "none";
-          cartOverlay.style.display = "none";
-        }, 3000);
-      });
-
       // Initialize the cart display and ratings on load
       updateCartDisplay();
       initializeRatings(); // <-- NEW FUNCTION CALL
     </script>
     <script src="https://unpkg.com/intasend-inlinejs-sdk@4.0.7/build/intasend-inline.js"></script>
     <script>
-      new window.IntaSend({
+      const intaSendInstance = new window.IntaSend({
         publicAPIKey: "ISPubKey_test_54f5a06d-8945-46b8-b65c-3382a385dbe6",
         live: false, //set to true when going live
       })
@@ -1013,6 +912,19 @@
         .on("IN-PROGRESS", (results) => {
           console.log("Payment in progress status", results);
         });
+
+      // Guard: prevent payment if cart is empty
+      if (intaSendBtn) {
+        intaSendBtn.addEventListener("click", (e) => {
+          if (totalPrice === 0) {
+            e.preventDefault();
+            alert("Your cart is empty. Please add items to proceed.");
+          } else {
+            // Ensure latest total is set on the button just before launch
+            intaSendBtn.setAttribute("data-amount", totalPrice.toFixed(2));
+          }
+        });
+      }
     </script>
   </body>
 </html>
